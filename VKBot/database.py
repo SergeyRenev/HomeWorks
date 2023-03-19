@@ -44,16 +44,31 @@ def insert_data_users(first_name, last_name, vk_id, vk_link):
             VALUES (%s,%s,%s,%s);""",(first_name, last_name, vk_id, vk_link)
         )
 
-
-def insert_data_seen_users(vk_id, index):
-    # вставка данных в таблицу seen_users
+def get_data_users():
+    # получить данные из таблицы users
     with connection.cursor() as cursor:
         cursor.execute(
-            f"""INSERT INTO seen_users (vk_id) 
-            VALUES (%s)
-            OFFSET %s;""",(vk_id, index)
+            f"""SELECT first_name,
+                       last_name,
+                       vk_id,
+                       vk_link
+                       FROM users"""
         )
+        return cursor.fetchall()
+        #return cursor.fetchone()
 
+
+def insert_data_seen_users(vk_id : str, index):
+    # вставка данных в таблицу seen_users
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                f"""INSERT INTO seen_users (vk_id)
+                VALUES(%s) RETURNING id;""",(vk_id,)
+            )
+            return cursor.fetchone()
+    except:
+        return -1
 
 def select(index):
     # выборка из непросмотренных людей
@@ -92,7 +107,7 @@ def drop_seen_users():
 
 
 def creating_database():
-    drop_users()
-    drop_seen_users()
+    #drop_users()
+    #drop_seen_users()
     create_table_users()
     create_table_seen_users()
