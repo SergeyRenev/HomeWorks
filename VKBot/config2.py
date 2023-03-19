@@ -1,5 +1,6 @@
 
-comm_token = ''
+comm_token = '' # токен сообщества
+
 user_token = ''
 
 index = 0 # индекс пользователей в таблице
